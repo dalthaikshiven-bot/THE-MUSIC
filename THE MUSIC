@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Haven - Free Legal Streaming</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-music"></i>
+                    <span>Music Haven</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#genres">Genres</a></li>
+                    <li><a href="#search" class="search-toggle">Search</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Discover Free Legal Music</h1>
+            <p>Stream thousands of public domain & Creative Commons tracks</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search songs, artists...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Player -->
+    <div class="player-container" id="playerContainer">
+        <div class="now-playing">
+            <img src="https://via.placeholder.com/60x60/FF6B6B/FFFFFF?text=NP" id="nowPlayingImg" alt="Now Playing">
+            <div class="track-info">
+                <div id="trackTitle">Select a track</div>
+                <div id="trackArtist">Artist Name</div>
+            </div>
+            <button id="playPauseBtn" class="play-pause">
+                <i class="fas fa-play"></i>
+            </button>
+        </div>
+        <div class="progress-container">
+            <span id="currentTime">0:00</span>
+            <input type="range" id="progressSlider" min="0" max="100" value="0">
+            <span id="duration">0:00</span>
+        </div>
+        <audio id="audioPlayer" preload="metadata"></audio>
+    </div>
+
+    <!-- Genres Section -->
+    <section id="genres" class="genres">
+        <div class="container">
+            <h2>Browse by Genre</h2>
+            <div class="genres-grid">
+                <div class="genre-card" data-genre="classical">
+                    <i class="fas fa-crown"></i>
+                    <h3>Classical</h3>
+                    <p>Beethoven, Mozart...</p>
+                </div>
+                <div class="genre-card" data-genre="jazz">
+                    <i class="fas fa-sax"></i>
+                    <h3>Jazz</h3>
+                    <p>Swing & Smooth</p>
+                </div>
+                <div class="genre-card" data-genre="folk">
+                    <i class="fas fa-guitar"></i>
+                    <h3>Folk</h3>
+                    <p>Acoustic Gems</p>
+                </div>
+                <div class="genre-card" data-genre="ambient">
+                    <i class="fas fa-mountain"></i>
+                    <h3>Ambient</h3>
+                    <p>Relax & Chill</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracks Grid -->
+    <section class="tracks">
+        <div class="container">
+            <h2 id="sectionTitle">Featured Tracks</h2>
+            <div class="tracks-grid" id="tracksGrid">
+                <!-- Tracks loaded by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Music Haven. All music is public domain or Creative Commons licensed.</p>
+            <p>Sources: Free Music Archive, YouTube Audio Library, ccMixter</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #667eea;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* Hero */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding-top: 80px;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.search-container {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+}
+
+#searchInput {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+}
+
+#searchInput::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+#searchBtn {
+    background: #667eea;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#searchBtn:hover {
+    background: #5a67d8;
+}
+
+/* Music Player */
+.player-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 1rem 2rem;
+    box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+    z-index: 999;
+    display: none;
+}
+
+.now-playing {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#nowPlayingImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+#trackTitle {
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#trackArtist {
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.play-pause {
+    background: #667eea;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.play-pause:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+#progressSlider {
+    flex: 1;
+    height: 5px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#progressSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #667eea;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Genres */
+.genres {
+    padding: 100px 0 80px;
+    background: white;
+}
+
+.genres h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.genres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.genre-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.genre-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.genre-card i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.genre-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Tracks */
+.tracks {
+    padding: 80px 0;
+    background: #f8f9ff;
+}
+
+.tracks h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.track-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.track-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.track-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+}
+
+.track-info {
+    padding: 1.5rem;
+}
+
+.track-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.track-artist {
+    color: #666;
+    font-size: 1rem;
+}
+
+.track-genre {
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-menu {
+        display: none;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .player-container {
+        padding: 1rem;
+    }
+    
+    .now-playing {
+        gap: 10px;
+    }
+    
+    #nowPlayingImg {
+        width: 50px;
+        height: 50px;
+    }
+}
+// Music Data (Public Domain & CC Licensed)
+const musicData = [
+    {
+        id: 1,
+        title: "Moonlight Sonata",
+        artist: "Ludwig van Beethoven",
+        genre: "classical",
+        duration: "5:32",
+        image: "https://images.unsplash.com/photo-1576165813248-d2a7f9b4e51e?w=300",
+        audio: "https://www.soundjay.com/misc/sounds/beethoven-moonlight-1.mp3" // Replace with your audio files
+    },
+    {
+        id: 2,
+        title: "Clair de Lune",
+        artist: "Claude Debussy",
+        genre: "classical",
+        duration: "4:58",
+        image: "https://images.unsplash.com/photo-1603398936398-b34e44a2e819?w=300",
+        audio: "https://www.soundjay.com/misc/sounds/clair-de-lune.mp3"
+    },
+    {
+        id: 3,
+        title: "Jazz Waltz",
+        artist: "Kevin MacLeod",
+        genre: "jazz",
+        duration: "3:15",
+        image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=300",
+        audio: "https://www.soundjay.com/misc/jazz-waltz.mp3"
+    },
+    {
+        id: 4,
+        title: "Acoustic Breeze",
+        artist: "Bensound",
+        genre: "folk",
+        duration: "2:45",
+        image: "https://images.unsplash.com/photo-1616767345882-0b67f5e416c1?w=300",
+        audio: "https://www.bensound.com/bensound-music/bensound-acousticbreeze.mp3"
+    },
+    {
+        id: 5,
+        title: "Dreams",
+        artist: "Joakim Karud",
+        genre: "ambient",
+        duration: "4:12",
+        image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=300",
+        audio: "https://soundcloud.com/joakimkarud/dreams"
+    }
+    // Add more tracks here...
+];
+
+// DOM Elements
+const audioPlayer = document.getElementById('audioPlayer');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const progressSlider = document.getElementById('progressSlider');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+const trackTitleEl = document.getElementById('trackTitle');
+const trackArtistEl = document.getElementById('trackArtist');
+const nowPlayingImg = document.getElementById('nowPlayingImg');
+const playerContainer = document.getElementById('playerContainer');
+const tracksGrid = document.getElementById('tracksGrid');
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const sectionTitle = document.getElementById('sectionTitle');
+
+// Current track
+let currentTrack = null;
+let isPlaying = false;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    renderTracks(musicData);
+    setupEventListeners();
+});
+
+// Render tracks
+function renderTracks(tracks) {
+    tracksGrid.innerHTML = tracks.map(track => `
+        <div class="track-card" data-track-id="${track.id}">
+            <div class="track-image" style="background: linear-gradient(45deg, ${getGenreColor(track.genre)}, ${getGenreColor(track.genre, true)})">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="track-info">
+                <div class="track-title">${track.title}</div>
+                <div class="track-artist">${track.artist}</div>
+                <div class="track-genre">${track.genre.toUpperCase()}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Event Listeners
+function setupEventListeners() {
+    // Play/Pause
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    
+    // Progress slider
+    progressSlider.addEventListener('input', setProgress
